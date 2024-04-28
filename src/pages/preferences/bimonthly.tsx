@@ -3,25 +3,27 @@ import { ProceedButton } from "@/components/ProceedButton";
 import { getPreference } from "@/lib/mercadopago";
 import { FormEvent, useState } from "react";
 import { BsCheck } from "react-icons/bs";
-import { FiMail, FiUser } from "react-icons/fi";
+import { FiMail, FiPhone, FiUser } from "react-icons/fi";
 import Cookies from 'js-cookie';
 import { EmailInput } from "@/components/EmailInput";
+import { IoLogoWhatsapp } from "react-icons/io";
 
 
 export default function Handler() {
     const [isLoading, setIsLoading] = useState(false);
     const [name, setName] = useState("");
+    const [phone, setPhone] = useState("");
     const [email, setEmail] = useState("");
 
     async function handlePayment(e: FormEvent) {
         e.preventDefault()
+        //implementar  comunicação com o banco
         const request = {
             amount: 249.9,
             product: "Plano Bimestral",
-            installments: 6
+            installments: 6,
         }
-        Cookies.set('name', name);
-        Cookies.set('email', email);
+
 
         setIsLoading(true);
         await getPreference(request);
@@ -54,8 +56,27 @@ export default function Handler() {
                             <FiUser className="text-gray-400" />
                         </div>
                     </div>
+                    <div className="relative my-5">
+                        <label htmlFor="name" className="sr-only">
+                            Name
+                        </label>
+                        <input
+                            value={phone}
+                            onChange={e => setPhone(e.target.value)}
+                            type="text"
+                            id="phone"
+                            name="phone"
+                            className="block w-full md:w-3/5 px-4 py-3 rounded-md bg-zinc-900 border-transparent text-zinc-300 border-2 focus:duration-500 focus:transition-all focus:ease-linear focus:outline-none  focus:border-2 focus:border-white focus:ring-0"
+                            placeholder="Digite seu whatsapp"
+                            required
+                        />
+                        <div className="absolute inset-y-0 right-0 md:right-[330px] xl:right-[460px] flex items-center px-2 pointer-events-none">
+                            <IoLogoWhatsapp className="text-gray-400" />
+                        </div>
+                    </div>
 
-                    <EmailInput 
+
+                    <EmailInput
                         email={email}
                         setEmail={setEmail} />
                     <ul className="flex flex-col my-10 text-zinc-400">

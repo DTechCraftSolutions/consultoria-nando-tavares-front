@@ -8,49 +8,7 @@ import Cookies from 'js-cookie';
 
 
 
-export default function Success(id: any) {
-    const name = Cookies.get('name');
-    const email = Cookies.get('email');
-    const [emailSent, setEmailSent] = useState(false)
-    const payment_id = id.id
-    const [details, setDetails] = useState<any>()
-    const getPaymentDetails = async () => {
-        try {
-            const response = await axios.get(`/api/transaction?payment_id=${payment_id}`)
-            setDetails(response.data)
-        } catch (error) {
-            console.error(error)
-        }
-    }
-    useEffect(() => {
-        getPaymentDetails();
-    }, []);
-
-    useEffect(() => {
-        if (details && !emailSent) {
-            const emailData = {
-                to: email ? email : "deydeyvid2022@gmail.com",
-                subject: `inscrição do cliente ${name?.toUpperCase()}`,
-                html: `<div style="font-family: Arial, sans-serif; font-size: 16px; color: #000;">
-                <div style="background-color: #000; padding: 20px;">
-                    <h1 style="color: #ff0000; text-align: center;">Consultoria Nando Tavares</h1>
-                </div>
-                <div style="padding: 20px;">
-                    <p>Olá <strong>${name?.toUpperCase()}</strong>,</p>
-                    <p>Parabéns! Você contratou o <strong>${details?.title}</strong> com a Consultoria Nando Tavares.</p>
-                    <p>Para acessar, clique no botão abaixo:</p>
-                    <div style="text-align: center; margin-top: 20px;">
-                        <a href="https://wa.me/5581997210434" target="_blank" style="background-color: #ff0000; color: #fff; padding: 10px 20px; border-radius: 5px; text-decoration: none;">Acessar</a>
-                    </div>
-                </div>
-            </div>
-                `
-            }
-
-            sendEmail(emailData);
-            setEmailSent(true);
-        }
-    }, [details, emailSent]);
+export default function Success() {
     return (
         <div className="text-white md:bg-home-pc w-screen h-screen bg-thanks bg-cover bg-no-repeat">
             <div className="bg-gradient h-full">
@@ -108,22 +66,3 @@ export default function Success(id: any) {
         </div>
     )
 }
-export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
-    const paymentId = Number(query.payment_id);
-
-    if (!paymentId) {
-
-        res.setHeader('Location', '/');
-        res.statusCode = 302;
-        res.end();
-        return {
-            props: {},
-        };
-    }
-
-    return {
-        props: {
-            id: paymentId,
-        },
-    };
-};

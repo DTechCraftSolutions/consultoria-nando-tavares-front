@@ -10,6 +10,7 @@ const apikey = String(process.env.MERCADOPAGO_ACCESS_TOKEN)
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const Email = String( req.body.email )
+    const {email, name, phone} = req.body
     const url = String(process.env.NEXT_PUBLIC_VERCEL_URL)
     try {
       if (req.method !== 'POST') {
@@ -26,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           back_url: `${url}/sell`,
           payer_email: Email
       })
-    
+    //pegar o id do plano e guardar usuário, o body já traz o payload que precisa!
       res.status(200).json({
         url: subscription.body.init_point
       })

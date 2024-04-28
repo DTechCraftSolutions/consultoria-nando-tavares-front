@@ -72,7 +72,7 @@ export default function Admin() {
   return (
     <div className="w-full h-screen">
       <div className="w-full px-6 flex justify-between items-center bg-zinc-800 h-16">
-        <Image src="/logo-reduzida.png" width={50} height={50} alt="" />
+        <Image src="/logo-reduzida.png" width={50} height={50} alt="logo" />
         <div className="flex items-center gap-5">
           <Popover>
             <PopoverTrigger className={`text-xl text-white ${alerts.length > 0 ? "border-[0.5px] animate-pulse border-red-500" : ""} p-2 hover:bg-zinc-300 duration-200 rounded-lg`}>

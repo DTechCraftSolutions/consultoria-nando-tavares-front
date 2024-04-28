@@ -11,7 +11,7 @@ export async function getPreference(request: PreferenceProps) {
     }
 }
 
-export async function getPreApproval(email: string) {
+export async function createPreApproval(email: string) {
     try {
         const response = await axios.post('/api/subscription', { email: email })
         const { url } = response.data
