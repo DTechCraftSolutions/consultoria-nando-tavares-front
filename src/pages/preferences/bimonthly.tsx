@@ -2,70 +2,16 @@ import { BackButton } from "@/components/BackButton";
 import { ProceedButton } from "@/components/ProceedButton";
 import { FormEvent, useState } from "react";
 import { BsCheck } from "react-icons/bs";
-import { FiMail, FiPhone, FiUser } from "react-icons/fi";
-import Cookies from "js-cookie";
+import { FiUser } from "react-icons/fi";
 import { EmailInput } from "@/components/EmailInput";
 import { IoLogoWhatsapp } from "react-icons/io";
-import { payment } from "mercadopago";
-import { PreferenceProps } from "@/lib/@types";
-import { useMutation } from "@/graphql/config/swr.config";
-import { CREATE_USER } from "@/graphql/mutations/create-user";
 import axios from "axios";
-
-const performMutation = async (
-  mutation: string,
-  createUserInput: {
-    name: string;
-    email: string;
-    phone: string;
-    planId: string;
-    recorrent: string;
-    payment: boolean;
-  }
-) => {
-  try {
-    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}`, {
-      query: mutation,
-      variables: {
-        createUserInput: {
-          name: createUserInput.name,
-          email: createUserInput.email,
-          phone: createUserInput.phone,
-          planId: createUserInput.planId,
-          recorrent: createUserInput.recorrent,
-          payment: createUserInput.payment,
-        },
-      },
-    });
-    return response.data;
-  } catch (error) {
-    throw new Error(`Erro na mutação: ${error}`);
-  }
-};
 
 export default function Handler() {
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-
-  const handleMutation = async (id: string) => {
-    setIsLoading(true);
-    try {
-      await performMutation(CREATE_USER, {
-        name,
-        email,
-        planId: id,
-        recorrent: "N",
-        payment: false,
-        phone,
-      });
-    } catch (error) {
-      console.error("Erro na mutação:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -83,8 +29,7 @@ export default function Handler() {
     setIsLoading(true);
     try {
       const response = await axios.post("/api/mercadopago_payment", request);
-      const { url, id } = response.data;
-      await handleMutation(id);
+      const { url } = response.data;
       window.location.href = url;
     } catch (error) {
       console.error("Erro ao processar pagamento:", error);
