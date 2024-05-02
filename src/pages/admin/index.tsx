@@ -23,12 +23,19 @@ import { useQuery } from "@/graphql/config/swr.config";
 import { FIND_ALL_USER } from "@/graphql/query/find-all-user";
 import axios from "axios";
 import { addMonths, format, set } from "date-fns";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Admin() {
   const { data }: any = useQuery(FIND_ALL_USER);
   const [users, setUsers] = useState<Payment[]>([]);
   const [alerts, setAlerts] = useState<string[]>([]);
-
+  const [isLoading, setIsLoading] = useState(false);
+  const timeOut = async () => {
+    setIsLoading(true)
+    setTimeout(() => {
+      setIsLoading(false)
+    }, 2000)
+  }
   const validateStatusInPaymentsNoRecurrent = async ({ payment }: { payment: any }) => {
     const planValidationMonths = (title: string) => {
       if (title === "Plano Bimestral") {
@@ -60,6 +67,7 @@ export default function Admin() {
   };
 
   const getMercadoPagoData = async () => {
+    let finalData: Payment[] = []
     const usersToGetPayments = data?.findAll;
     if (usersToGetPayments && usersToGetPayments.length > 0) {
       usersToGetPayments.map(async (user: any) => {
@@ -74,9 +82,10 @@ export default function Admin() {
           plan: paymentData.items[0].title,
         }
         console.log(data)
-        setUsers((prev) => [...prev, data])
+        finalData.push(data)
       })
     }
+    setUsers(finalData)
   }
   const router = useRouter();
   const auth = getAuth(app);
@@ -86,7 +95,10 @@ export default function Admin() {
     }
   });
   useEffect(() => {
-    getMercadoPagoData();
+    timeOut()
+    if(users.length === 0){
+      getMercadoPagoData()
+    }
     return () => authenticated();
   }, [data]);
 
@@ -159,7 +171,15 @@ export default function Admin() {
         <h2 className="text-3xl text-white p-5 font-bold">
           Painel de controle
         </h2>
-        <DataTableDemo data={users} />
+        {isLoading ? (
+          <div className="mt-4">
+            <div className="flex items-center w-full justify-between">
+              <Skeleton className="w-2/5 bg-zinc-500 h-10" />
+              <Skeleton className="w-2/5 bg-zinc-500 h-10" />
+            </div>
+            <Skeleton className="w-full bg-zinc-500 h-72 mt-4" />
+          </div>
+        ) : (<DataTableDemo data={users} />)}
       </div>
     </div>
   );
